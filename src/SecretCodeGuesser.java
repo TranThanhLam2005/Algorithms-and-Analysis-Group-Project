@@ -14,15 +14,27 @@ public class SecretCodeGuesser {
             if (res != -2) break; // -2 means guess length is wrong
             length++;
         }
-        // Step 2: Determine frequency of each letter
-        HashMap<Character, Integer> remainingLetters = new HashMap<>();
-        for (char c : LETTERS) remainingLetters.put(c, 0);
 
-        for (char letter : LETTERS) {
-            char[] guessArr = new char[length];
-            Arrays.fill(guessArr, letter);
-            int matches = sc.guess(new String(guessArr));
-            remainingLetters.put(letter, matches);
+        // Step 2: Determine frequency of each letter
+        CustomHashMap remainingLetters = new CustomHashMap(6);
+        int totalAssigned = 0;
+
+        // Go through each letter and guess its frequency
+        for (int i = 0; i < LETTERS.length; i++) {
+            char letter = LETTERS[i];
+            if (i < LETTERS.length - 1) { // first 5 letters → use guess()
+                char[] guessArr = new char[length];
+
+                // Fill the guess array with the current letter
+                Arrays.fill(guessArr, letter);
+                int matches = sc.guess(new String(guessArr));
+
+                // Put the letter and its matches in the map
+                remainingLetters.put(letter, matches);
+                totalAssigned += matches;
+            } else { // last letter → deduce without guessing
+                remainingLetters.put(letter, length - totalAssigned);
+            }
         }
 
         // Step 3: Start with the most frequent letter
