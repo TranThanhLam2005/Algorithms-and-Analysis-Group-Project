@@ -9,6 +9,7 @@ public class SecretCodeGuesser {
         // Step 1: Find the length of the secret code
         int length = 1;
         while (true) {
+            // Fill the guess string with the current letter
             String guessStr = "B".repeat(length);
             int res = sc.guess(guessStr);
             counter++;
@@ -24,7 +25,6 @@ public class SecretCodeGuesser {
 
         // Step 2: Determine frequency of each letter
         CustomHashMap remainingLetters = new CustomHashMap(6);
-
         int totalAssigned = 0;
 
         // Go through each letter and guess its frequency
