@@ -4,10 +4,10 @@ public class SecretCode {
 
   public SecretCode() {
     // for the real test, your program will not know this
-    correctCode = "BACXIUAAAAAAAAAAAAA";
+    correctCode = "BAACXIUAAAAAAAAAAA";
     counter = 0;
   }
-  // Returns 
+  // Returns
   // -2 : if length of guessedCode is wrong
   // -1 : if guessedCode contains invalid characters
   // >=0 : number of correct characters in correct positions

@@ -3,7 +3,7 @@ import java.util.HashMap;
 
 public class SecretCodeGuesser {
     private static final char[] LETTERS = {'B', 'A', 'C', 'X', 'I', 'U'};
-
+    int counter = 0;
     public void start() {
         SecretCode sc = new SecretCode();
         // Step 1: Find the length of the secret code
@@ -11,12 +11,20 @@ public class SecretCodeGuesser {
         while (true) {
             String guessStr = "B".repeat(length);
             int res = sc.guess(guessStr);
-            if (res != -2) break; // -2 means guess length is wrong
+            counter++;
+            if (res != -2) {
+                if (res == length) {
+                    System.out.println("Secret code: " + guessStr);
+                    return; // stop, already solved
+                }
+                break; // correct length found, continue to Step 2
+            }
             length++;
         }
 
         // Step 2: Determine frequency of each letter
         CustomHashMap remainingLetters = new CustomHashMap(6);
+
         int totalAssigned = 0;
 
         // Go through each letter and guess its frequency
@@ -24,16 +32,25 @@ public class SecretCodeGuesser {
             char letter = LETTERS[i];
             if (i < LETTERS.length - 1) { // first 5 letters → use guess()
                 char[] guessArr = new char[length];
-
                 // Fill the guess array with the current letter
+
                 Arrays.fill(guessArr, letter);
                 int matches = sc.guess(new String(guessArr));
+                counter++;
 
                 // Put the letter and its matches in the map
                 remainingLetters.put(letter, matches);
                 totalAssigned += matches;
             } else { // last letter → deduce without guessing
-                remainingLetters.put(letter, length - totalAssigned);
+                int remaining = length - totalAssigned;
+                remainingLetters.put(letter, remaining);
+                // Edge case: all 'U'
+                // we not call the guess() method for the last letter, so we have print it out in edge case
+                if (remaining == length) {
+                    System.out.println("Secret code: " + "U".repeat(length));
+                    System.out.println("Number of guesses: " + counter);
+                    return; // stop early, solved
+                }
             }
         }
 
@@ -64,6 +81,7 @@ public class SecretCodeGuesser {
                 char[] tempGuess = code.clone();
                 tempGuess[pos] = ch;
                 int feedback = sc.guess(new String(tempGuess));
+                counter++;
 
                 if (feedback > currentMatches) {
                     code = tempGuess;
@@ -75,7 +93,6 @@ public class SecretCodeGuesser {
                 }
             }
         }
-
         System.out.println("Secret code: " + new String(code));
     }
 }
