@@ -1,16 +1,18 @@
-import java.util.Arrays;
-import java.util.HashMap;
-
 public class SecretCodeGuesser {
     private static final char[] LETTERS = {'B', 'A', 'C', 'X', 'I', 'U'};
     int counter = 0;
+
     public void start() {
         SecretCode sc = new SecretCode();
         // Step 1: Find the length of the secret code
         int length = 1;
         while (true) {
-            // Fill the guess string with the current letter
-            String guessStr = "B".repeat(length);
+            // Fill the guess string with 'B' using a loop
+            char[] guessArr1 = new char[length];
+            for (int i = 0; i < length; i++) {
+                guessArr1[i] = 'B';
+            }
+            String guessStr = new String(guessArr1);
             int res = sc.guess(guessStr);
             counter++;
             if (res != -2) {
@@ -32,22 +34,24 @@ public class SecretCodeGuesser {
             char letter = LETTERS[i];
             if (i < LETTERS.length - 1) { // first 5 letters → use guess()
                 char[] guessArr = new char[length];
-                // Fill the guess array with the current letter
-
-                Arrays.fill(guessArr, letter);
+                // Fill the guess array with the current letter using a loop
+                for (int j = 0; j < length; j++) {
+                    guessArr[j] = letter;
+                }
                 int matches = sc.guess(new String(guessArr));
                 counter++;
-
                 // Put the letter and its matches in the map
                 remainingLetters.put(letter, matches);
                 totalAssigned += matches;
             } else { // last letter → deduce without guessing
                 int remaining = length - totalAssigned;
                 remainingLetters.put(letter, remaining);
-                // Edge case: all 'U'
-                // we not call the guess() method for the last letter, so we have print it out in edge case
-                if (remaining == length) {
-                    System.out.println("Secret code: " + "U".repeat(length));
+                if (remaining == length) { // edge case: all 'U'
+                    char[] allU = new char[length];
+                    for (int j = 0; j < length; j++) {
+                        allU[j] = 'U';
+                    }
+                    System.out.println("Secret code: " + new String(allU));
                     System.out.println("Number of guesses: " + counter);
                     return; // stop early, solved
                 }
@@ -57,7 +61,8 @@ public class SecretCodeGuesser {
         // Step 3: Start with the most frequent letter
         char mostFreqLetter = 'B';
         int maxCount = -1;
-        for (char c : LETTERS) {
+        for (int i = 0; i < LETTERS.length; i++) {
+            char c = LETTERS[i];
             int count = remainingLetters.get(c);
             if (count > maxCount) {
                 maxCount = count;
@@ -66,7 +71,10 @@ public class SecretCodeGuesser {
         }
 
         char[] code = new char[length];
-        Arrays.fill(code, mostFreqLetter);
+        // Fill the code array with the most frequent letter using a loop
+        for (int i = 0; i < code.length; i++) {
+            code[i] = mostFreqLetter;
+        }
         int currentMatches = maxCount;
 
         // Reduce quota for the most frequent letter
@@ -74,11 +82,16 @@ public class SecretCodeGuesser {
 
         // Step 4: Assign remaining letters to correct positions
         for (int pos = 0; pos < length; pos++) {
-            for (char ch : LETTERS) {
+            for (int i = 0; i < LETTERS.length; i++) {
+                char ch = LETTERS[i];
                 int quota = remainingLetters.get(ch);
                 if (quota <= 0) continue;
 
-                char[] tempGuess = code.clone();
+                char[] tempGuess = new char[length];
+                // clone manually
+                for (int j = 0; j < length; j++) {
+                    tempGuess[j] = code[j];
+                }
                 tempGuess[pos] = ch;
                 int feedback = sc.guess(new String(tempGuess));
                 counter++;
@@ -93,6 +106,7 @@ public class SecretCodeGuesser {
                 }
             }
         }
+
         System.out.println("Secret code: " + new String(code));
     }
 }
