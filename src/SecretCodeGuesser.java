@@ -110,3 +110,5 @@ public class SecretCodeGuesser {
         System.out.println("Secret code: " + new String(code));
     }
 }
+
+// Development suppport by ChatGPT(model GPT-4 August 2025 version)
